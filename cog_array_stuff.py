@@ -47,6 +47,25 @@ class Empties_Set:
     def __len__(self):
         return len(self.empties)
 
+class Empties_Set_initial_status:
+    def __init__(self,empties,Precords):
+        self.empties = empties
+        self.coords_list = []
+        for y,x in Precords:
+            coords = Coords(x, y)
+            if coords not in self.empties:
+                self.coords_list.append(coords)
+
+    def __eq__(self, other):
+        return self.empties == other.empties
+    def __ne__(self, other):
+        return not(self == other)
+
+    def __contains__(self, coords):
+        return coords in self.empties
+
+    def __len__(self):
+        return len(self.empties)
 """
 - `excludes_dict[type(cog)]' is a `set' of all coordinates where `cog' should not be placed.
 - For example, if `cog' is of type `Up_Cog', then `excludes_dict[type(cog)]' should contain all coords on the top row of
@@ -318,12 +337,14 @@ class Cog_Array:
             raise Cog_Not_Found_Error
         attempts = 0
         while attempts < len(self.spares):
-            cog = random.sample(self.spares, 1)[0]
+            # print(self.spares)
+            # print(random.sample(list(self.spares),1))
+            cog = random.sample(list(self.spares), 1)[0]
             if not self.excludes(coords,cog):
                 break
             attempts += 1
         else:
-            cog = random.sample(self.spares, 1)[0]
+            cog = random.sample(list(self.spares), 1)[0]
         self.move_cog_from_spares(coords,cog)
         return cog
 

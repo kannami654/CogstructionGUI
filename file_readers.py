@@ -58,6 +58,7 @@ def read_cog_datas(filename):
             elif row["cog type"].strip() not in ["Cog", "Character"]:
                 raise Cog_Data_File_Error(i, "cog type", filename, "cog")
 
+            #print(row["cog type"].strip(),args)
             cog_datas.append({
                 "cog type": row["cog type"].strip(),
                 "args": args

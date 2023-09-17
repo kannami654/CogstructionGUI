@@ -31,10 +31,12 @@ example, a `Right_Cog' might have low strength for coordinates on the far right 
 `Cog.instantiate_strengths(cog_array)'. 
 """
 class Cog:
-    def __init__(self, build_rate, flaggy_rate, exp_mult):
+    def __init__(self, build_rate, flaggy_rate, exp_mult,precoord_x=None,precoord_y=None):
         self.build_rate = build_rate
         self.flaggy_rate = flaggy_rate
         self.exp_mult = exp_mult
+        self.precoord_x=precoord_x#Pre-conversion coord 
+        self.precoord_y=precoord_y#Pre-conversion coord 
         self.strengths = None
         self.strength_start_value = None
         self.average_obj = None
@@ -42,6 +44,8 @@ class Cog:
 
     def __str__(self):
         return (
+             ("pre-Coords:    (%d,%d)\n"%(self.precoord_x,self.precoord_y) if self.precoord_y is not None else \
+              "pre-Coords:   spare#%d\n"%self.precoord_x if self.precoord_x  is not None else "") +
              ("Type:               %s\n" % self.__class__.__name__) +
             (("Build rate:         %d\n" % self.build_rate) if self.build_rate > 0 else "") +
             (("Flaggy rate:        %d\n" % self.flaggy_rate) if self.flaggy_rate > 0 else "") +
@@ -119,8 +123,8 @@ class Cog:
 
 
 class Character(Cog):
-    def __init__(self, build_rate, flaggy_rate, exp_rate, name ="hahahaha"):
-        super().__init__(build_rate,flaggy_rate,0.0)
+    def __init__(self, build_rate, flaggy_rate, exp_rate, name ="hahahaha",precoord_x=None,precoord_y=None):
+        super().__init__(build_rate,flaggy_rate,0.0,precoord_x,precoord_y)
         self.exp_rate = exp_rate
         self.name = name
     def get_abbr(self):
@@ -134,8 +138,8 @@ class Character(Cog):
 
 
 class Boost_Cog(Cog):
-    def __init__(self, build_rate, flaggy_rate, exp_mult, build_rate_boost, flaggy_rate_boost, flaggy_speed_boost, exp_boost):
-        super().__init__(build_rate, flaggy_rate, exp_mult)
+    def __init__(self, build_rate, flaggy_rate, exp_mult, build_rate_boost, flaggy_rate_boost, flaggy_speed_boost, exp_boost,precoord_x=None,precoord_y=None):
+        super().__init__(build_rate, flaggy_rate, exp_mult,precoord_x,precoord_y)
         self.build_rate_boost = build_rate_boost
         self.flaggy_rate_boost = flaggy_rate_boost
         self.flaggy_speed_boost = flaggy_speed_boost

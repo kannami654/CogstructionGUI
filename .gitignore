@@ -1,0 +1,20 @@
+# IDE and editor specific files #
+#################################
+
+# OS generated files #
+######################
+.DS_Store
+._*
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+icon*
+ehthumbs.db
+Thumbs.db
+_notes
+__pycache__/
+
+#setup.py
+setup.py
