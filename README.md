@@ -8,17 +8,26 @@ I have abandoned this project. I am not responding to questions or requests. For
 There are two options.
 1. Using your terminal, navigate to a place where you want to put the code, and copy+paste the following in your terminal: `git clone https://github.com/automorphis/Cogstruction.git`.
 2. Click the big green **Code** button on GitHub and click `Download ZIP`. Unzip it wherever you want.  
+2023年9月17日追記　ソースいらないよって人はBildの中のexefileだけダウンロードでOKです
+distの方にもありますが、こっちはウイルスバスターとかが反応しちゃうかも
+exeファイル起動で立ち上がります。
 
 # How to run
 1. [Follow these instructions](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for downloading Python, setting up a virtual environment, activating it, and installing packages. 
 2. This project uses only one package that does not come with a standard Python installation, namely Numpy. After you have set up a virtual environment and activated it, install Numpy by opening a terminal and typing `pip install numpy`.
 3. Open the `cog_datas.csv` file using Excel or a similar program and read the data carefully. The data that is currently there should serve as an example of how to fill it out with your own cogs.
 4. Delete all the rows of `cog_datas.csv` except for the first one. Fill out the rest of the rows with your own cogs and your characters, including spare cogs on your cog shelf. Exclude any characters you intend to keep on the cog shelf. **Remember to remove cogs from your cog array to see their raw numbers; the numbers you see while they are currently in the cog array have adjacency bonuses already applied.** If you do not do this, the algorithm will give you a suboptimal array.
+2023年9月17日追記　コピーしたCogstruction Dataを左のテキストボックスに入れ、「Write COG」するだけで、生成されます。（必須）。
 5. Open the `empties_datas.csv` file suing Excel or a similar program. Look at the data. If the row reads `0, 0`, then that means the lower-left coordinate in the array. If it reads `11, 7`, then that means the upper-right corner. These are the places you have **not** yet unlocked using flaggies.
 6. Delete all the rows of `empties_datas.csv` except for the first one. Fill it out with all the places you have not yet unlocked using flaggies. **Remember that these coordinates are zero-indexed; there should be no `x` values more than 11 nor `y` values more than 7.**
+2023年9月17日追記　コピーしたCogstruction Emptiesを右のテキストボックスに入れ、「Write EMP」で、生成します（必須）。
 7. Using a terminal, navigate to the project directory (using `cd`) and type `python main.py`.
+2023年9月17日追記　GUI独自機能として「推す」ボタンで歯車生成に配置するキャラクタなどを計算から除外できます。
+その後、「押忍」で実行します。
 8. Sit back and relax for about 5-15 min, depending on your machine.
 9. After the algorithm terminates, open `output.txt` and put the cogs where it tells you to.
+2023年9月17日追記　生成されたテキストの中に元々配置していた座標（Pre-Coords）を追記しています。左下角がOです。
+追記　GUIを使うのでPySimpleGUIが必要です。また、機能追加のためにpandasを使用しています。
 
 # To do
 
