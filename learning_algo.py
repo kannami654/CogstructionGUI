@@ -441,7 +441,7 @@ def learning_algo(
     popup_str_diff="\n".join([
                     f"Build rate:\t{controller.best[0].get_build_rate():,.0f}\t({controller.best[0].get_build_rate()-cog_array_initial.get_build_rate():,.0f})",
                     f"Flaggy rate:\t{controller.best[0].get_flaggy_rate():,.0f}\t({controller.best[0].get_flaggy_rate()-cog_array_initial.get_flaggy_rate():,.0f})",
-                    f"Exp mult:\t{100 * controller.best[0].get_total_exp_mult():.0f}%\t({controller.best[0].get_total_exp_mult()-cog_array_initial.get_total_exp_mult():,.0f}%)"
+                    f"Exp mult:\t\t{100 * controller.best[0].get_total_exp_mult():.0f}%\t({controller.best[0].get_total_exp_mult()-cog_array_initial.get_total_exp_mult():,.0f}%)"
                     ])    
 
     #print("final\n",popup_str_diff)

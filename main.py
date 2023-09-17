@@ -340,56 +340,57 @@ if __name__ == "__main__":
         elif event=="-B-SELECT-CHARA-":
             cog_datas = read_cog_datas(cog_datas_filename)
             empties = read_empties_datas(empties_datas_filename)
-            cog_datas,cog_dataframe=add_Coord(empties,cog_datas)
-            #print([[cog_data["cog type"],*cog_data["args"]] for cog_data in cog_datas])
-            #print(cog_datas)
+            if((cog_datas is not None) and ((empties is not None))):
+                cog_datas,cog_dataframe=add_Coord(empties,cog_datas)
+                #print(cog_datas)
+                #print(temp[0])
+                #print(cog_dataframe)
+                #print(cog_dataframe.to_dict())
+                #print(cog_factory(temp))
+                #print(temp[0])
+                #print(cog_dataframe[cog_dataframe["cog type"]=="Character"].values.tolist())
+                charactesr_name=[data[-1] for data in cog_dataframe[cog_dataframe["cog type"]=="Character"]["args"].values.tolist()]
+                chara_coords=[data for data in cog_dataframe[cog_dataframe["cog type"]=="Character"]["Pre-Coords"].values.tolist()]
+                #print(chara_coords)
+                #print(cog_dataframe)
+                #print((Check is None))
+                if (Check is None):
+                    #print("reset")
+                    Check=[True if t[1] is not None else False for t in chara_coords]
+                res=active_sub_window(Check,charactesr_name)               
+                #print(res)
 
-            
-            #print(temp[0])
-            #print(cog_dataframe)
-            #print(cog_dataframe.to_dict())
-            #print(cog_factory(temp))
-            #print(temp[0])
-            #print(cog_dataframe[cog_dataframe["cog type"]=="Character"].values.tolist())
-            charactesr_name=[data[-1] for data in cog_dataframe[cog_dataframe["cog type"]=="Character"]["args"].values.tolist()]
-            chara_coords=[data for data in cog_dataframe[cog_dataframe["cog type"]=="Character"]["Pre-Coords"].values.tolist()]
-            #print(chara_coords)
-            #print(cog_dataframe)
-            #print((Check is None))
-            if (Check is None):
-                #print("reset")
-                Check=[True if t[1] is not None else False for t in chara_coords]
-            res=active_sub_window(Check,charactesr_name)               
-            #print(res)
-
-            if(res is not None):
-                Check=[t for t in res.values()] 
-                Label=[data for data,t in res.items() if t]
-                #print(Label)
-                post_datas=[]
-                for data in cog_datas:
-                    #print(data)
-                    if(data["cog type"]=="Character"):
+                if(res is not None):
+                    Check=[t for t in res.values()] 
+                    Label=[data for data,t in res.items() if t]
+                    #print(Label)
+                    post_datas=[]
+                    for data in cog_datas:
                         #print(data)
-                        add_data=[data for name in Label if(data["args"][3]==name)]
-                        if(len(add_data)!=0):
-                            post_datas.append(data) 
+                        if(data["cog type"]=="Character"):
+                            #print(data)
+                            add_data=[data for name in Label if(data["args"][3]==name)]
+                            if(len(add_data)!=0):
+                                post_datas.append(data) 
+                        else:
+                            post_datas.append(data)
+                    #print(post_data)
+                    cog_datas=post_datas
+                    if((len(cog_datas)+len(empties)-96)<0):
+                        window["-T-CHECK-ERR-"].update("除外するキャラが多すぎます!あと%d人必要"%(96-len(cog_datas)-len(empties)))
                     else:
-                        post_datas.append(data)
-                #print(post_data)
-                cog_datas=post_datas
-                if((len(cog_datas)+len(empties)-96)<0):
-                    window["-T-CHECK-ERR-"].update("除外するキャラが多すぎます!あと%d人必要"%(96-len(cog_datas)-len(empties)))
+                        window["-T-CHECK-ERR-"].update("OK")
                 else:
-                    window["-T-CHECK-ERR-"].update("OK")
+                        window["-T-CHECK-ERR-"].update("中断ed")
             else:
-                    window["-T-CHECK-ERR-"].update("中断ed")
+                window["-T-CHECK-ERR-"].update("no file")
             
 
 
         elif event =="-B-START-":
             window["STATUS"].update("計算中だよ")
             window.refresh()
+            window["-PROG-"].update(0)
             A = np.array([
                 [1.,1.,1.],
                 [inv_build_weight,-inv_flaggy_weight,0.],
@@ -408,34 +409,38 @@ if __name__ == "__main__":
                 cog_datas = read_cog_datas(cog_datas_filename)
             if(empties is None):
                 empties = read_empties_datas(empties_datas_filename)
-                cog_datas,cog_dataframe=add_Coord(empties,cog_datas)
-            empties_set = Empties_Set(empties)
-            cogs = cog_factory(cog_datas)
-            #print(cogs)
-            #print("emp.",empties)
-            #print("set.",empties_set)
-            #print("set.",empties_set.coords_list)
+                if(empties is not None):
+                    cog_datas,cog_dataframe=add_Coord(empties,cog_datas)
+            if((cog_datas is not None) and ((empties is not None))):
+                empties_set = Empties_Set(empties)
+                cogs = cog_factory(cog_datas)
+                #print(cogs)
+                #print("emp.",empties)
+                #print("set.",empties_set)
+                #print("set.",empties_set.coords_list)
 
-             
-            best = learning_algo(
-                cogs,
-                empties_set,
-                set(),
-                pop_size,
-                lambda cog: cog.standard_obj_fxn(build_weight,flaggy_weight,exp_weight),
-                factor_base,
-                max_factor,
-                max_multiplier,
-                controller,
-                window
-            )
-            #print(best[0])
+                
+                best = learning_algo(
+                    cogs,
+                    empties_set,
+                    set(),
+                    pop_size,
+                    lambda cog: cog.standard_obj_fxn(build_weight,flaggy_weight,exp_weight),
+                    factor_base,
+                    max_factor,
+                    max_multiplier,
+                    controller,
+                    window
+                )
+                #print(best[0])
 
-            #print("Writing best cog array to %s" % output_filename)
-            with open(output_filename, "w") as fh:
-                fh.write(str(best[0]))
-            window["STATUS"].update("計算ed.best cog array to %s" %(output_filename))
-                       
+                #print("Writing best cog array to %s" % output_filename)
+                with open(output_filename, "w") as fh:
+                    fh.write(str(best[0]))
+                window["STATUS"].update("計算ed.best cog array to %s" %(output_filename))
+            else:
+                window["STATUS"].update("失敗ed")
+                        
     
     window.close()
     print("end")

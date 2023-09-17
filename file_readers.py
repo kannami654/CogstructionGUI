@@ -11,11 +11,13 @@ Cogstruction: Optimizing cog arrays in Legends of Idleon
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
+    2023/09/17 add error expection
 """
 
 import csv
 import math
 
+import os
 from constants import NUM_COGS_HORI, NUM_COGS_VERT
 from coords import Coords
 
@@ -28,58 +30,64 @@ are the arguments passed to the class constructor.
 """
 def read_cog_datas(filename):
     cog_datas = []
-    with open(filename, "r", newline="") as fh:
-        for i,row in enumerate(csv.DictReader(fh)):
-            _check_for_Cog_Data_File_Error("build_rate", "int", row, i, filename)
-            _check_for_Cog_Data_File_Error("flaggy_rate", "int", row, i, filename)
-            args = (
-                int(row["build_rate"]) if len(row["build_rate"])>0 else 0,
-                int(row["flaggy_rate"]) if len(row["flaggy_rate"])>0 else 0
-            )
-            if row["cog type"] != "Character":
-                _check_for_Cog_Data_File_Error("exp_mult", "float", row, i, filename)
-                args += (float(row["exp_mult"]) if len(row["exp_mult"])>0 else 0.0,)
-            else:
-                _check_for_Cog_Data_File_Error("exp_rate", "int", row, i, filename)
-                args += (int(row["exp_rate"]) if len(row["exp_rate"])>0 else 0,)
-                if len(row["name"]) > 0:
-                    args += (row["name"],)
-            if row["cog type"].strip() in ["Yang_Cog", "X_Cog", "Plus_Cog", "Left_Cog", "Right_Cog", "Up_Cog", "Down_Cog", "Row_Cog", "Col_Cog", "Omni_Cog"]:
-                _check_for_Cog_Data_File_Error("build_rate_boost", "float", row, i, filename)
-                _check_for_Cog_Data_File_Error("flaggy_rate_boost", "float", row, i, filename)
-                _check_for_Cog_Data_File_Error("flaggy_speed", "float", row, i, filename)
-                _check_for_Cog_Data_File_Error("exp_rate_boost", "float", row, i, filename)
-                args += (
-                    float(row["build_rate_boost"]) if len(row["build_rate_boost"])>0 else 0.0,
-                    float(row["flaggy_rate_boost"]) if len(row["flaggy_rate_boost"])>0 else 0.0,
-                    float(row["flaggy_speed"]) if len(row["flaggy_speed"]) > 0 else 0.0,
-                    float(row["exp_rate_boost"]) if len(row["exp_rate_boost"]) > 0 else 0.0
+    if(os.path.isfile(filename)):
+        with open(filename, "r", newline="") as fh:
+            for i,row in enumerate(csv.DictReader(fh)):
+                _check_for_Cog_Data_File_Error("build_rate", "int", row, i, filename)
+                _check_for_Cog_Data_File_Error("flaggy_rate", "int", row, i, filename)
+                args = (
+                    int(row["build_rate"]) if len(row["build_rate"])>0 else 0,
+                    int(row["flaggy_rate"]) if len(row["flaggy_rate"])>0 else 0
                 )
-            elif row["cog type"].strip() not in ["Cog", "Character"]:
-                raise Cog_Data_File_Error(i, "cog type", filename, "cog")
+                if row["cog type"] != "Character":
+                    _check_for_Cog_Data_File_Error("exp_mult", "float", row, i, filename)
+                    args += (float(row["exp_mult"]) if len(row["exp_mult"])>0 else 0.0,)
+                else:
+                    _check_for_Cog_Data_File_Error("exp_rate", "int", row, i, filename)
+                    args += (int(row["exp_rate"]) if len(row["exp_rate"])>0 else 0,)
+                    if len(row["name"]) > 0:
+                        args += (row["name"],)
+                if row["cog type"].strip() in ["Yang_Cog", "X_Cog", "Plus_Cog", "Left_Cog", "Right_Cog", "Up_Cog", "Down_Cog", "Row_Cog", "Col_Cog", "Omni_Cog"]:
+                    _check_for_Cog_Data_File_Error("build_rate_boost", "float", row, i, filename)
+                    _check_for_Cog_Data_File_Error("flaggy_rate_boost", "float", row, i, filename)
+                    _check_for_Cog_Data_File_Error("flaggy_speed", "float", row, i, filename)
+                    _check_for_Cog_Data_File_Error("exp_rate_boost", "float", row, i, filename)
+                    args += (
+                        float(row["build_rate_boost"]) if len(row["build_rate_boost"])>0 else 0.0,
+                        float(row["flaggy_rate_boost"]) if len(row["flaggy_rate_boost"])>0 else 0.0,
+                        float(row["flaggy_speed"]) if len(row["flaggy_speed"]) > 0 else 0.0,
+                        float(row["exp_rate_boost"]) if len(row["exp_rate_boost"]) > 0 else 0.0
+                    )
+                elif row["cog type"].strip() not in ["Cog", "Character"]:
+                    raise Cog_Data_File_Error(i, "cog type", filename, "cog")
 
-            #print(row["cog type"].strip(),args)
-            cog_datas.append({
-                "cog type": row["cog type"].strip(),
-                "args": args
-            })
-    return cog_datas
+                #print(row["cog type"].strip(),args)
+                cog_datas.append({
+                    "cog type": row["cog type"].strip(),
+                    "args": args
+                })
+        return cog_datas
+    else:
+        return None
 
 """
 Reads empties data from CSV and outputs a `set' of `Coords'.
 """
 def read_empties_datas(filename):
     empties_datas = []
-    with open(filename, "r", newline="") as fh:
-        for i, row in enumerate(csv.DictReader(fh)):
-            _check_for_Cog_Data_File_Error("empties_x", "int", row, i, filename)
-            _check_for_Cog_Data_File_Error("empties_y", "int", row, i, filename)
-            if not (0<=int(row["empties_x"])< NUM_COGS_HORI):
-                raise Cog_Data_File_Error(i, "empties_x", filename, "oob")
-            if not (0<=int(row["empties_y"]) < NUM_COGS_VERT):
-                raise Cog_Data_File_Error(i,"empties_y", filename, "oob")
-            empties_datas.append(Coords(int(row["empties_x"]), int(row["empties_y"])))
-    return set(empties_datas)
+    if(os.path.isfile(filename)):
+        with open(filename, "r", newline="") as fh:
+            for i, row in enumerate(csv.DictReader(fh)):
+                _check_for_Cog_Data_File_Error("empties_x", "int", row, i, filename)
+                _check_for_Cog_Data_File_Error("empties_y", "int", row, i, filename)
+                if not (0<=int(row["empties_x"])< NUM_COGS_HORI):
+                    raise Cog_Data_File_Error(i, "empties_x", filename, "oob")
+                if not (0<=int(row["empties_y"]) < NUM_COGS_VERT):
+                    raise Cog_Data_File_Error(i,"empties_y", filename, "oob")
+                empties_datas.append(Coords(int(row["empties_x"]), int(row["empties_y"])))
+        return set(empties_datas)
+    else:
+        return None
 
 """
 TODO
