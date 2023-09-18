@@ -1,3 +1,50 @@
+# GUI追加にあたっての追記部分
+pythonをインストールしない人にも使えるようにしたい思い、GUIで操作できるように変更し、実行ファイル単体で動くように想定したものです。  
+よってGUIを追加する部分のみの追加であり、元々の計算のメイン部分は変更しておりません。  
+ソースいらないよって人はBuildの中のEXEfile.zipだけダウンロードでOKです。　　
+distの方にもありますが、こっちはウイルスバスターとかが反応しちゃうかもしれません。  
+中にあるexeファイル起動で立ち上がります。  
+計算にはCPU負荷がそれなりにかかります。  
+  
+# ライブラリ関係  
+GUIを使うのでPySimpleGUIが必要です。また、機能追加のためにpandasを使用しています。  
+コードで動かす人は、main.pyを実行すればGUIが立ち上がります。  
+mainに組み込んでしまったので、コードだけでさっくり動かしたい方は本家をご参照ください。  
+
+# 使用方法
+本プログラムの実行に[Idleon Toolbox](https://idleontoolbox.com/)を使用する箇所がございます。  
+予めログインしておくことをお勧めします。  
+画面の上部にもリンクをつけてあるのでそちらをクリックでもToolboxへ辿り着けます。  
+このリンクはConstructionへの直リンクなので、ログイン済みであればすぐに歯車画面へ飛びます。  
+
+1. ToolboxでコピーしたCogstruction Data（クリックするだけで良い）を左のテキストボックスに入れ、「Write COG」すると必要な `cog_datas.csv` が生成されます。（**必須**）。  
+2. 同様にCogstruction Emptiesを右のテキストボックスに入れ、「Write EMP」で、 `empties_datas.csv` を生成します（**必須**）。  
+3. GUI独自機能として「推す」ボタンで歯車生成に配置するキャラクタなどを計算から除外できます。  
+ 推さないキャラは配置されません。  
+ よって下記バグの2は、この機能を使えば、解消できると思っていただいて結構です。  
+ ボタンを押さない、あるいは全員推してチェックをつけると全キャラ配置されます。  
+ 注意点として、元々配置しているキャラクタも除外することが可能ですが、その場合インベに余っている歯車がないと計算ができないつくりになっています。  
+4. その後、「押忍」で配置の計算を実行します。  
+ 計算には時間がかかりますので、リラックスしてしばらくお待ちください。  
+ 進捗はprogress barに表示されますが、途中で終了することがあります（最大の世代数を最大値に設定しているため、途中で打ち切りがあると一気に終わる）。
+5. 完了すると、表示されているディレクトリに `output.txt` が生成されます。
+ このデータの歯車情報を元に並び替えると、パラメータがGUI右下の枠の中にある数値になります。
+ 括弧内に今の配置から比較した、各数値の上昇幅を記載しております。 
+ 並び替えの費用対効果としてご参考にお願いいたします（並び替えは手動なので、1時間くらいかかると思います）。  
+ なお、**必ずしもすべてのステータスが上昇するものではありません。**  
+ ビルドレート＞フラグレート＞＞経験値ボーナスの順に重み付けされています。  
+6. 生成されたテキストの中に、元々配置してあったXY座標（Pre-Coords）を追記しています。左下角が(0,0)です。  
+ 左がX,右がY座標です。  
+ 歯車生成にあたっているキャラクタ、配置していない歯車は、**歯車生成にあたっているキャラ左から右、そしてインベの歯車の左上から右の順に**spare#0,1,2…とナンバリングされます。  
+
+# 並べ替え手順について
+これが非常に困難ですが、並べ替えに関するTipsを紹介します。  
+まず、テキストの下の方にあるSpare Cogを探します。  
+このスペアは、このプログラムで検討した配置では使用しない歯車ですので、このスペアの中で、元々盤内に配してあった（PreーCoordがspare#nでない）歯車を探し、まずそれらをすべて取り除きます。  
+すると盤内に空いたスペースができますので、その座標にどんどんと歯車を追加して順次繰り返していけば、混乱なく並べ替えができるはずです。  
+それでも時間がかかるのはご愛嬌。  
+
+## 以下はオリジナルの原文（英語）
 # Cogstruction
 
 "Cogstruction" is a genetic algorithm that produces high quality cog arrays for the construction skill in the game "Legends of Idleon".
@@ -8,26 +55,20 @@ I have abandoned this project. I am not responding to questions or requests. For
 There are two options.
 1. Using your terminal, navigate to a place where you want to put the code, and copy+paste the following in your terminal: `git clone https://github.com/automorphis/Cogstruction.git`.
 2. Click the big green **Code** button on GitHub and click `Download ZIP`. Unzip it wherever you want.  
-2023年9月17日追記　ソースいらないよって人はBildの中のexefileだけダウンロードでOKです
-distの方にもありますが、こっちはウイルスバスターとかが反応しちゃうかも
-exeファイル起動で立ち上がります。
+
 
 # How to run
 1. [Follow these instructions](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for downloading Python, setting up a virtual environment, activating it, and installing packages. 
 2. This project uses only one package that does not come with a standard Python installation, namely Numpy. After you have set up a virtual environment and activated it, install Numpy by opening a terminal and typing `pip install numpy`.
 3. Open the `cog_datas.csv` file using Excel or a similar program and read the data carefully. The data that is currently there should serve as an example of how to fill it out with your own cogs.
-4. Delete all the rows of `cog_datas.csv` except for the first one. Fill out the rest of the rows with your own cogs and your characters, including spare cogs on your cog shelf. Exclude any characters you intend to keep on the cog shelf. **Remember to remove cogs from your cog array to see their raw numbers; the numbers you see while they are currently in the cog array have adjacency bonuses already applied.** If you do not do this, the algorithm will give you a suboptimal array.
-2023年9月17日追記　コピーしたCogstruction Dataを左のテキストボックスに入れ、「Write COG」するだけで、生成されます。（必須）。
+4. Delete all the rows of `cog_datas.csv` except for the first one. Fill out the rest of the rows with your own cogs and your characters, including spare cogs on your cog shelf. Exclude any characters you intend to keep on the cog shelf. **Remember to remove cogs from your cog array to see their raw numbers; the numbers you see while they are currently in the cog array have adjacency bonuses already applied.** If you do not do this, the algorithm will give you a suboptimal array.  
 5. Open the `empties_datas.csv` file suing Excel or a similar program. Look at the data. If the row reads `0, 0`, then that means the lower-left coordinate in the array. If it reads `11, 7`, then that means the upper-right corner. These are the places you have **not** yet unlocked using flaggies.
 6. Delete all the rows of `empties_datas.csv` except for the first one. Fill it out with all the places you have not yet unlocked using flaggies. **Remember that these coordinates are zero-indexed; there should be no `x` values more than 11 nor `y` values more than 7.**
-2023年9月17日追記　コピーしたCogstruction Emptiesを右のテキストボックスに入れ、「Write EMP」で、生成します（必須）。
-7. Using a terminal, navigate to the project directory (using `cd`) and type `python main.py`.
-2023年9月17日追記　GUI独自機能として「推す」ボタンで歯車生成に配置するキャラクタなどを計算から除外できます。
-その後、「押忍」で実行します。
+7. Using a terminal, navigate to the project directory (using `cd`) and type `python main.py`.  
+
 8. Sit back and relax for about 5-15 min, depending on your machine.
 9. After the algorithm terminates, open `output.txt` and put the cogs where it tells you to.
-2023年9月17日追記　生成されたテキストの中に元々配置していた座標（Pre-Coords）を追記しています。左下角がOです。
-追記　GUIを使うのでPySimpleGUIが必要です。また、機能追加のためにpandasを使用しています。
+
 
 # To do
 
